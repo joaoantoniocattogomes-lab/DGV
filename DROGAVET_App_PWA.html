@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DROGAVET">
+<meta name="theme-color" content="#0A3D2B">
+<title>DROGAVET Campo</title>
+<style>
+:root{
+  --g0:#0A3D2B;--g1:#0F6E56;--g2:#1D9E75;--g4:#9FE1CB;--g5:#E1F5EE;
+  --ink:#0D1F17;--ink2:#2C3D35;--ink3:#5A7066;--ink4:#8FA89F;
+  --sf:#F4FAF7;--card:#FFF;--bd:#D4EAE0;
+  --red:#E24B4A;--redl:#FCEBEB;
+  --amb:#EF9F27;--ambl:#FAEEDA;
+  --blu:#185FA5;--blul:#E6F1FB;
+  --safe-top:env(safe-area-inset-top,44px);
+  --safe-bot:env(safe-area-inset-bottom,34px);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
+html{height:100%;height:-webkit-fill-available}
+body{
+  height:100%;height:-webkit-fill-available;
+  background:var(--sf);
+  font-family:-apple-system,system-ui,sans-serif;
+  color:var(--ink);
+  overflow:hidden;
+  position:fixed;width:100%;
+}
+#app{
+  display:flex;flex-direction:column;
+  height:100%;height:-webkit-fill-available;
+  max-width:430px;margin:0 auto;
+  background:var(--sf);
+  position:relative;
+}
+.safe-top{height:var(--safe-top);background:var(--g0);flex-shrink:0}
+.hdr{
+  background:var(--g0);
+  padding:10px 16px 14px;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;
+}
+.hdr-brand{display:flex;align-items:center;gap:9px}
+.hdr-logo{
+  width:34px;height:34px;
+  background:var(--g2);border-radius:9px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;
+}
+.hdr-title{font-size:15px;font-weight:600;color:#fff;letter-spacing:-.3px}
+.hdr-sub{font-size:10px;color:var(--g4);margin-top:1px}
+.hdr-date{font-size:10px;color:var(--g4)}
+.scr{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(64px + var(--safe-bot))}
+.pg{display:none;padding:14px 14px 0}.pg.on{display:block}
+.nav{
+  position:absolute;bottom:0;left:0;right:0;
+  background:#fff;
+  border-top:1px solid var(--bd);
+  padding-bottom:var(--safe-bot);
+  display:flex;z-index:100;
+}
+.ni{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  padding:8px 2px 4px;gap:2px;cursor:pointer;
+  color:var(--ink4);position:relative;
+}
+.ni.on{color:var(--g1)}
+.ni svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ni-lbl{font-size:9.5px;font-weight:500}
+.badge{
+  position:absolute;top:4px;right:calc(50% - 20px);
+  background:var(--red);color:#fff;
+  font-size:8px;font-weight:700;
+  padding:1px 4px;border-radius:8px;
+  min-width:16px;text-align:center;
+  display:none;
+}
+.fab{
+  position:absolute;
+  bottom:calc(58px + var(--safe-bot));
+  right:16px;
+  width:52px;height:52px;
+  background:var(--g1);
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:26px;
+  box-shadow:0 4px 16px rgba(15,110,86,.4);
+  cursor:pointer;border:none;z-index:99;
+}
+.card{
+  background:var(--card);
+  border-radius:14px;border:1px solid var(--bd);
+  padding:13px;margin-bottom:9px;
+  box-shadow:0 2px 8px rgba(10,61,43,.07);
+}
+.kpi-g{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.kpi{background:var(--card);border-radius:8px;border:1px solid var(--bd);padding:11px;text-align:center}
+.kv{font-size:22px;font-weight:600;color:var(--g1)}
+.kl{font-size:9.5px;color:var(--ink4);margin-top:2px}
+.kpi.red .kv{color:var(--red)}.kpi.amb .kv{color:#854F0B}.kpi.blu .kv{color:var(--blu)}
+.li{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--bd)}
+.li:last-child{border-bottom:none}
+.av{
+  width:36px;height:36px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:600;flex-shrink:0;
+}
+.lb{flex:1;min-width:0}
+.ln{font-size:13px;font-weight:500;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ls{font-size:11px;color:var(--ink3);margin-top:2px}
+.lr{color:var(--ink4)}
+.tag{display:inline-block;font-size:10px;font-weight:500;padding:2px 7px;border-radius:8px;margin-right:3px}
+.t-g{background:var(--g5);color:var(--g1)}
+.t-r{background:var(--redl);color:var(--red)}
+.t-a{background:var(--ambl);color:#854F0B}
+.t-b{background:var(--blul);color:var(--blu)}
+.t-p{background:#EEEDFE;color:#534AB7}
+.t-gr{background:#F0F0F0;color:#555}
+.sec{font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink4);margin:14px 0 8px}
+.btn{width:100%;padding:13px;border-radius:14px;border:none;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+.btn-p{background:var(--g1);color:#fff}
+.btn-s{background:var(--g5);color:var(--g1);margin-top:8px}
+.btn-sm{padding:7px 13px;font-size:12px;border-radius:8px;width:auto;display:inline-block;font-weight:600;cursor:pointer;border:none;font-family:inherit;margin-right:6px}
+.btn-r{background:var(--redl);color:var(--red);margin-top:8px}
+.st-r{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0}
+.st{background:var(--g5);border-radius:8px;padding:8px 4px;text-align:center}
+.st-v{font-size:15px;font-weight:600;color:var(--g1)}
+.st-l{font-size:9px;color:var(--ink3);margin-top:2px}
+.back-btn{
+  display:flex;align-items:center;gap:6px;
+  color:var(--g1);font-size:13px;font-weight:500;
+  margin-bottom:12px;cursor:pointer;
+  background:none;border:none;padding:4px 0;font-family:inherit;
+}
+.wpp-btn{
+  background:#25D366;color:#fff;border:none;
+  border-radius:8px;padding:8px 14px;
+  font-size:12px;font-weight:600;cursor:pointer;
+  margin-top:8px;font-family:inherit;
+}
+.ov{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.5);
+  z-index:200;align-items:flex-end;justify-content:center;
+}
+.ov.open{display:flex}
+.md{
+  background:#fff;border-radius:24px 24px 0 0;
+  padding:0 16px calc(24px + var(--safe-bot));
+  width:100%;max-width:430px;
+  max-height:90vh;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+}
+.md-h{width:36px;height:4px;background:#ddd;border-radius:2px;margin:12px auto 16px}
+.md-t{font-size:16px;font-weight:600;color:var(--ink);margin-bottom:16px}
+.fl{display:flex;flex-direction:column;gap:12px}
+.fl-r{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lbl{font-size:11px;font-weight:600;color:var(--ink3);display:block;margin-bottom:4px}
+.inp{
+  width:100%;padding:10px 12px;
+  border-radius:8px;border:1.5px solid var(--bd);
+  font-size:15px;color:var(--ink);background:#fff;
+  -webkit-appearance:none;font-family:inherit;
+}
+.inp:focus{outline:none;border-color:var(--g2);box-shadow:0 0 0 3px rgba(29,158,117,.1)}
+select.inp{background:#fff}
+textarea.inp{min-height:64px;resize:none}
+.alert-item{border-radius:8px;padding:11px 13px;margin-bottom:7px;border-left:3px solid}
+.alert-item.urg{border-color:var(--red);background:var(--redl)}
+.alert-item.hj{border-color:var(--amb);background:var(--ambl)}
+.alert-item.px{border-color:var(--g2);background:var(--g5)}
+.dose-row{padding:7px 0;border-bottom:1px solid var(--bd);font-size:12px}
+.dose-row:last-child{border-bottom:none}
+#toast{
+  position:fixed;bottom:calc(80px + var(--safe-bot));
+  left:50%;transform:translateX(-50%) translateY(20px);
+  background:#1A2E20;color:#fff;
+  padding:9px 20px;border-radius:20px;
+  font-size:13px;opacity:0;
+  transition:all .25s;z-index:300;
+  pointer-events:none;white-space:nowrap;
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.empty{text-align:center;padding:36px 20px;color:var(--ink4)}
+.empty .ei{font-size:36px;margin-bottom:10px}
+.empty .et{font-size:14px;font-weight:500;color:var(--ink2);margin-bottom:4px}
+.install-banner{
+  background:var(--g0);color:#fff;
+  padding:12px 16px;
+  font-size:12px;line-height:1.6;
+  display:flex;align-items:center;gap:10px;
+  flex-shrink:0;
+}
+.install-close{
+  background:none;border:none;color:var(--g4);
+  font-size:18px;cursor:pointer;padding:0;margin-left:auto;
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="safe-top"></div>
+
+  <!-- BANNER INSTRUÇÃO INSTALAR -->
+  <div class="install-banner" id="install-banner">
+    <div>📲 <b>Adicione à Tela Inicial:</b> Toque em <b>Compartilhar ⬆️</b> → <b>"Adicionar à Tela de Início"</b></div>
+    <button class="install-close" onclick="document.getElementById('install-banner').style.display='none'">✕</button>
+  </div>
+
+  <div class="hdr">
+    <div class="hdr-brand">
+      <div class="hdr-logo">🐴</div>
+      <div>
+        <div class="hdr-title">DROGAVET Campo</div>
+        <div class="hdr-sub" id="hdr-sub">CRM Equinos</div>
+      </div>
+    </div>
+    <div class="hdr-date" id="hdr-date"></div>
+  </div>
+
+  <div class="scr">
+    <div class="pg on" id="pg-home"></div>
+    <div class="pg" id="pg-alertas"></div>
+    <div class="pg" id="pg-clientes"></div>
+    <div class="pg" id="pg-visitas"></div>
+    <div class="pg" id="pg-dose"></div>
+  </div>
+
+  <div class="nav">
+    <div class="ni on" id="ni-home" onclick="goTo('home')">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span class="ni-lbl">Início</span>
+    </div>
+    <div class="ni" id="ni-alertas" onclick="goTo('alertas')">
+      <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      <div class="badge" id="badge">0</div>
+      <span class="ni-lbl">Alertas</span>
+    </div>
+    <div class="ni" id="ni-clientes" onclick="goTo('clientes')">
+      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+      <span class="ni-lbl">Clientes</span>
+    </div>
+    <div class="ni" id="ni-visitas" onclick="goTo('visitas')">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
+      <span class="ni-lbl">Visitas</span>
+    </div>
+    <div class="ni" id="ni-dose" onclick="goTo('dose')">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      <span class="ni-lbl">Doses</span>
+    </div>
+  </div>
+
+  <button class="fab" id="fab" onclick="fabAction()">+</button>
+</div>
+
+<!-- MODAIS -->
+<div class="ov" id="md-cli" onclick="closeMdOut(event,'md-cli')">
+  <div class="md"><div class="md-h"></div><div class="md-t">Novo cliente</div>
+    <div class="fl">
+      <div><label class="lbl">Nome / Haras *</label><input class="inp" id="c-nm" placeholder="Ex: Haras Boa Vista"></div>
+      <div class="fl-r">
+        <div><label class="lbl">Responsável</label><input class="inp" id="c-rsp" placeholder="Nome"></div>
+        <div><label class="lbl">WhatsApp</label><input class="inp" id="c-tel" placeholder="(44) 99999" type="tel"></div>
+      </div>
+      <div class="fl-r">
+        <div><label class="lbl">Cidade</label><select class="inp" id="c-cid"><option>Maringá</option><option>Pres. Prudente</option><option>Outra</option></select></div>
+        <div><label class="lbl">Atividade</label><select class="inp" id="c-atv"><option>Vaquejada / Laço</option><option>Reprodução / Cria</option><option>Alta performance</option><option>Geral</option></select></div>
+      </div>
+      <div class="fl-r">
+        <div><label class="lbl">Segmento</label><select class="inp" id="c-seg"><option value="ouro">Ouro</option><option value="alto" selected>Alto valor</option><option value="recorrente">Recorrente</option><option value="potencial">Potencial</option></select></div>
+        <div><label class="lbl">Veterinário</label><input class="inp" id="c-vet" placeholder="Dr./Dra."></div>
+      </div>
+      <div><label class="lbl">Observações</label><textarea class="inp" id="c-obs" placeholder="Histórico, contexto…"></textarea></div>
+      <button class="btn btn-p" onclick="saveCli()">Salvar cliente</button>
+      <button class="btn btn-s" onclick="closeMd('md-cli')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div class="ov" id="md-an" onclick="closeMdOut(event,'md-an')">
+  <div class="md"><div class="md-h"></div><div class="md-t">Cadastrar animal</div>
+    <div class="fl">
+      <div><label class="lbl">Nome *</label><input class="inp" id="a-nm" placeholder="Ex: Trovão…"></div>
+      <div class="fl-r">
+        <div><label class="lbl">Raça</label><input class="inp" id="a-rca" placeholder="QM, Mangalarga…"></div>
+        <div><label class="lbl">Peso (kg)</label><input class="inp" id="a-pso" type="number" placeholder="450"></div>
+      </div>
+      <div class="fl-r">
+        <div><label class="lbl">Sexo</label><select class="inp" id="a-sx"><option>Macho</option><option>Fêmea</option><option>Castrado</option></select></div>
+        <div><label class="lbl">Idade (anos)</label><input class="inp" id="a-id" type="number" placeholder="5"></div>
+      </div>
+      <div><label class="lbl">Produto principal</label>
+        <select class="inp" id="a-prod">
+          <option value="">— sem reposição —</option>
+          <option value="Omeprazol tratamento|28|5">Omeprazol tratamento (28d)</option>
+          <option value="Omeprazol manutenção|30|5">Omeprazol manutenção (30d)</option>
+          <option value="Biotina injetável|14|3">Biotina injetável (14d)</option>
+          <option value="Ivermectina pasta|60|7">Ivermectina pasta (60d)</option>
+          <option value="Moxidectina pasta|60|7">Moxidectina pasta (60d)</option>
+          <option value="Firocoxibe|30|5">Firocoxibe (30d)</option>
+          <option value="Levotiroxina|30|5">Levotiroxina (30d)</option>
+          <option value="Progesterona injetável|7|2">Progesterona injetável (7d)</option>
+          <option value="Altrenogeste oral|30|5">Altrenogeste oral (30d)</option>
+          <option value="OrthoEq Grow|30|5">OrthoEq Grow (30d)</option>
+          <option value="OrthoEq Performance|30|5">OrthoEq Performance (30d)</option>
+          <option value="PerformEq Prep|30|5">PerformEq Prep (30d)</option>
+          <option value="PerformEq Race|1|1">PerformEq Race (por evento)</option>
+          <option value="PerformEq Recover|30|5">PerformEq Recover (30d)</option>
+          <option value="MuscleEq Adulto|30|5">MuscleEq Adulto (30d)</option>
+          <option value="MuscleEq Potro|30|5">MuscleEq Potro (30d)</option>
+          <option value="MuscleEq Égua|30|5">MuscleEq Égua (30d)</option>
+          <option value="MetabEq Equilíbrio|30|5">MetabEq Equilíbrio (30d)</option>
+          <option value="RespEq|30|5">RespEq (30d)</option>
+          <option value="GastroEq Ativo|28|5">GastroEq Ativo (28d)</option>
+          <option value="GastroEq Manutenção|30|5">GastroEq Manutenção (30d)</option>
+          <option value="ReproEq Égua|30|5">ReproEq Égua (30d)</option>
+          <option value="ReproEq Garanhão|30|5">ReproEq Garanhão (30d)</option>
+          <option value="TopEq Tendão|30|5">TopEq Tendão (30d)</option>
+          <option value="TopEq Poultice|30|5">TopEq Poultice (30d)</option>
+        </select>
+      </div>
+      <div><label class="lbl">Última dose (para alerta)</label><input class="inp" id="a-ult" type="date"></div>
+      <div><label class="lbl">Observações clínicas</label><textarea class="inp" id="a-obs" placeholder="Histórico, alergias, vet responsável…"></textarea></div>
+      <button class="btn btn-p" onclick="saveAn()">Salvar animal</button>
+      <button class="btn btn-s" onclick="closeMd('md-an')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div class="ov" id="md-vis" onclick="closeMdOut(event,'md-vis')">
+  <div class="md"><div class="md-h"></div><div class="md-t">Registrar visita</div>
+    <div class="fl">
+      <div><label class="lbl">Cliente *</label><select class="inp" id="v-cl"><option value="">— selecione —</option></select></div>
+      <div class="fl-r">
+        <div><label class="lbl">Data</label><input class="inp" id="v-dt" type="date"></div>
+        <div><label class="lbl">Perfil</label><select class="inp" id="v-pf"><option>Dono</option><option>Treinador</option><option>Gerente</option><option>Veterinário</option><option>Tratador</option></select></div>
+      </div>
+      <div><label class="lbl">Produtos apresentados</label><input class="inp" id="v-pr" placeholder="Ex: OrthoEq, GastroEq…"></div>
+      <div><label class="lbl">Resultado</label><select class="inp" id="v-st"><option>Fechado</option><option>Proposta enviada</option><option>Retorno agendado</option><option>Interessado</option><option>Sem interesse</option></select></div>
+      <div class="fl-r">
+        <div><label class="lbl">Valor (R$)</label><input class="inp" id="v-vl" type="number" value="0" step="50"></div>
+        <div><label class="lbl">Próxima ação</label><input class="inp" id="v-nx" placeholder="Ex: Ligar em 7d"></div>
+      </div>
+      <div><label class="lbl">Notas</label><textarea class="inp" id="v-nt" placeholder="Contexto, observações…"></textarea></div>
+      <button class="btn btn-p" onclick="saveVis()">Salvar visita</button>
+      <button class="btn btn-s" onclick="closeMd('md-vis')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div class="ov" id="md-buy" onclick="closeMdOut(event,'md-buy')">
+  <div class="md"><div class="md-h"></div><div class="md-t">Registrar compra</div>
+    <div class="fl">
+      <div><label class="lbl">Cliente *</label><select class="inp" id="b-cl"><option value="">— selecione —</option></select></div>
+      <div class="fl-r">
+        <div><label class="lbl">Data</label><input class="inp" id="b-dt" type="date"></div>
+        <div><label class="lbl">Valor (R$)</label><input class="inp" id="b-vl" type="number" value="0" step="50"></div>
+      </div>
+      <div><label class="lbl">Produtos *</label><input class="inp" id="b-pr" placeholder="Ex: OrthoEq Performance 500g…"></div>
+      <div><label class="lbl">Observações</label><input class="inp" id="b-ob" placeholder="Vet, prescrição…"></div>
+      <button class="btn btn-p" onclick="saveBuy()">Salvar compra</button>
+      <button class="btn btn-s" onclick="closeMd('md-buy')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── STORAGE (localStorage — funciona quando adicionado à tela inicial) ──
+var KEY='drv4';
+var DB={clientes:[],animais:[],visitas:[],compras:[]};
+function load(){try{var s=localStorage.getItem(KEY);if(s)DB=Object.assign({clientes:[],animais:[],visitas:[],compras:[]},JSON.parse(s))}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){toast('⚠️ Erro ao salvar — adicione à Tela Inicial')}}
+load();
+
+// ── UTILS ──
+var CLRS=['#0F6E56','#185FA5','#534AB7','#993C1D','#854F0B','#1D8F6E','#3B6D11'];
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,5)}
+function today(){return new Date().toISOString().split('T')[0]}
+function fmt(d){return d?new Date(d+'T12:00:00').toLocaleDateString('pt-BR'):'—'}
+function fmtM(v){return'R$'+(v||0).toLocaleString('pt-BR')}
+function ini(n){return(n||'?').split(' ').map(function(w){return w[0]}).join('').slice(0,2).toUpperCase()}
+function clr(n){return CLRS[Math.abs((n||'').split('').reduce(function(a,c){return a+c.charCodeAt(0)},0))%CLRS.length]}
+function dias(u,c){if(!u)return 999;var d=new Date(u+'T12:00:00');d.setDate(d.getDate()+parseInt(c));var n=new Date();n.setHours(0,0,0,0);return Math.round((d-n)/86400000)}
+function stA(d,a){if(d<0)return'urg';if(d<=1)return'hj';if(d<=parseInt(a||5))return'px';return'ok'}
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},2500)}
+function copyText(txt){
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(function(){toast('Copiado! Cole no WhatsApp ✓')})}
+  else{var ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.focus();ta.select();document.execCommand('copy');document.body.removeChild(ta);toast('Copiado! Cole no WhatsApp ✓')}
+}
+
+// ── NAVEGAÇÃO ──
+var cur='home',curCli='',curAn='';
+function goTo(p){
+  document.querySelectorAll('.pg').forEach(function(x){x.classList.remove('on')});
+  document.querySelectorAll('.ni').forEach(function(x){x.classList.remove('on')});
+  document.getElementById('pg-'+p).classList.add('on');
+  document.getElementById('ni-'+p).classList.add('on');
+  cur=p;
+  if(p!=='clientes'){curCli='';curAn='';}
+  renderPg(p);
+}
+function renderPg(p){
+  if(p==='home')renderHome();
+  else if(p==='alertas')renderAlerts();
+  else if(p==='clientes'){if(curAn)renderAnimal();else if(curCli)renderCli();else renderClis();}
+  else if(p==='visitas')renderVis();
+  else if(p==='dose')renderDose();
+}
+function fabAction(){
+  if(cur==='clientes')openMd('md-cli');
+  else if(cur==='visitas')openMd('md-vis');
+  else openMd('md-buy');
+}
+
+// ── MODAIS ──
+function openMd(id){fillSels();setDates();document.getElementById(id).classList.add('open')}
+function closeMd(id){document.getElementById(id).classList.remove('open')}
+function closeMdOut(e,id){if(e.target.id===id)closeMd(id)}
+function setDates(){['v-dt','b-dt','a-ult'].forEach(function(id){var el=document.getElementById(id);if(el&&!el.value)el.value=today()})}
+function fillSels(){
+  ['v-cl','b-cl'].forEach(function(id){
+    var s=document.getElementById(id);if(!s)return;
+    var v=s.value;
+    s.innerHTML='<option value="">— selecione —</option>'+DB.clientes.map(function(c){return'<option value="'+c.id+'"'+(v===c.id?' selected':'')+'>'+c.nome+'</option>'}).join('');
+  });
+  if(curCli){['v-cl','b-cl'].forEach(function(id){var s=document.getElementById(id);if(s&&!s.value)s.value=curCli})}
+}
+
+// ── SALVAR ──
+function saveCli(){
+  var nm=document.getElementById('c-nm').value.trim();if(!nm){toast('Informe o nome');return}
+  DB.clientes.push({id:uid(),nome:nm,resp:v('c-rsp'),tel:v('c-tel'),cidade:v('c-cid'),ativ:v('c-atv'),seg:v('c-seg'),vet:v('c-vet'),obs:v('c-obs')});
+  save();closeMd('md-cli');toast('Cliente salvo ✓');
+  ['c-nm','c-rsp','c-tel','c-vet','c-obs'].forEach(function(id){document.getElementById(id).value=''});
+  renderPg(cur);
+}
+function saveAn(){
+  if(!curCli){toast('Abra um cliente primeiro');return}
+  var nm=document.getElementById('a-nm').value.trim();if(!nm){toast('Informe o nome do animal');return}
+  var pf=v('a-prod'),parts=pf?pf.split('|'):['','30','5'];
+  DB.animais.push({id:uid(),cliId:curCli,nome:nm,rca:v('a-rca'),peso:v('a-pso'),sx:v('a-sx'),idade:v('a-id'),prod:parts[0],ciclo:parts[1]||'30',aviso:parts[2]||'5',ultima:v('a-ult'),obs:v('a-obs')});
+  save();closeMd('md-an');toast('Animal cadastrado ✓');
+  ['a-nm','a-rca','a-pso','a-id','a-obs'].forEach(function(id){document.getElementById(id).value=''});
+  renderCli();
+}
+function saveVis(){
+  var cliId=v('v-cl');if(!cliId){toast('Selecione o cliente');return}
+  DB.visitas.unshift({id:uid(),cliId:cliId,dt:v('v-dt'),pf:v('v-pf'),pr:v('v-pr'),st:v('v-st'),vl:parseFloat(v('v-vl'))||0,nx:v('v-nx'),nt:v('v-nt')});
+  save();closeMd('md-vis');toast('Visita registrada ✓');
+  ['v-pr','v-nx','v-nt'].forEach(function(id){document.getElementById(id).value=''});
+  document.getElementById('v-vl').value=0;
+  renderPg(cur);
+}
+function saveBuy(){
+  var cliId=v('b-cl');if(!cliId){toast('Selecione o cliente');return}
+  var pr=document.getElementById('b-pr').value.trim();if(!pr){toast('Informe o produto');return}
+  DB.compras.unshift({id:uid(),cliId:cliId,dt:v('b-dt'),vl:parseFloat(v('b-vl'))||0,pr:pr,ob:v('b-ob')});
+  save();closeMd('md-buy');toast('Compra registrada ✓');
+  ['b-pr','b-ob'].forEach(function(id){document.getElementById(id).value=''});
+  document.getElementById('b-vl').value=0;
+  renderPg(cur);
+}
+function v(id){var el=document.getElementById(id);return el?el.value:''}
+
+// ── ALERTAS ──
+function getAlerts(){
+  return DB.animais.filter(function(a){return a.prod&&a.ultima}).map(function(a){
+    var d=dias(a.ultima,a.ciclo);
+    var cli=DB.clientes.find(function(c){return c.id===a.cliId});
+    return Object.assign({},a,{d:d,st:stA(d,a.aviso),cliNome:cli?cli.nome:'?',tel:cli?cli.tel:''});
+  }).filter(function(a){return a.st!=='ok'}).sort(function(x,y){return x.d-y.d});
+}
+function alertHtml(a){
+  var txt=a.d<0?'Vencido '+Math.abs(a.d)+'d':a.d===0?'Hoje!':a.d===1?'Amanhã':'Em '+a.d+'d';
+  var tagCls=a.st==='urg'?'t-r':a.st==='hj'?'t-a':'t-g';
+  var wpp='Olá '+a.cliNome+'! 🐴 Lembrete: '+a.nome+' precisa repor *'+a.prod+'* ('+txt.toLowerCase()+'). Posso preparar o pedido? — DROGAVET';
+  return'<div class="alert-item '+a.st+'">'+
+    '<div style="display:flex;align-items:center;justify-content:space-between">'+
+    '<div style="font-size:12px;font-weight:600">'+a.nome+' · '+a.cliNome+'</div>'+
+    '<span class="tag '+tagCls+'">'+txt+'</span></div>'+
+    '<div class="ls">'+a.prod+'</div>'+
+    (a.tel?'<button class="wpp-btn" onclick="copyText(`'+wpp.replace(/`/g,'\\`')+'`)">📱 Copiar WhatsApp</button>':'')+
+    '</div>';
+}
+function updateBadge(){
+  var n=getAlerts().filter(function(a){return a.d<0||a.d<=1}).length;
+  var b=document.getElementById('badge');
+  b.textContent=n;b.style.display=n>0?'block':'none';
+}
+
+// ── RENDERIZAÇÕES ──
+function renderHome(){
+  var now=new Date(),m=now.getMonth(),y=now.getFullYear();
+  var fat=DB.compras.filter(function(b){var d=new Date(b.dt);return d.getMonth()===m&&d.getFullYear()===y}).reduce(function(s,b){return s+b.vl},0);
+  var vis=DB.visitas.filter(function(v){var d=new Date(v.dt);return d.getMonth()===m&&d.getFullYear()===y}).length;
+  var alts=getAlerts();
+  var urg=alts.filter(function(a){return a.d<0||a.d<=1}).length;
+  updateBadge();
+  document.getElementById('pg-home').innerHTML=
+    '<div class="kpi-g">'+
+    '<div class="kpi"><div class="kv">'+DB.clientes.length+'</div><div class="kl">Clientes</div></div>'+
+    '<div class="kpi red"><div class="kv">'+urg+'</div><div class="kl">Alertas urgentes</div></div>'+
+    '<div class="kpi blu"><div class="kv">'+(fat>0?'R$'+Math.round(fat/1000)+'k':'R$0')+'</div><div class="kl">Faturamento mês</div></div>'+
+    '<div class="kpi amb"><div class="kv">'+vis+'</div><div class="kl">Visitas mês</div></div>'+
+    '</div>'+
+    '<div class="sec">Alertas de reposição</div>'+
+    (alts.length?alts.slice(0,3).map(alertHtml).join(''):'<div style="color:var(--ink4);font-size:13px;padding:8px 0">✓ Tudo em dia!</div>')+
+    '<div class="sec">Últimas visitas</div>'+
+    (DB.visitas.length?DB.visitas.slice(0,4).map(function(vis){
+      var cli=DB.clientes.find(function(c){return c.id===vis.cliId});
+      var bg=clr(cli?cli.nome:'?');
+      var stCls={Fechado:'t-g','Proposta enviada':'t-b','Retorno agendado':'t-p','Interessado':'t-a','Sem interesse':'t-gr'}[vis.st]||'t-gr';
+      return'<div class="li"><div class="av" style="background:'+bg+'20;color:'+bg+'">'+ini(cli?cli.nome:'?')+'</div>'+
+        '<div class="lb"><div class="ln">'+(cli?cli.nome:'?')+'</div>'+
+        '<div class="ls">'+(vis.pr||'—')+' · '+fmt(vis.dt)+'</div></div>'+
+        '<span class="tag '+stCls+'">'+vis.st+'</span></div>';
+    }).join(''):'<div style="color:var(--ink4);font-size:13px;padding:8px 0">Nenhuma visita ainda.</div>');
+}
+
+function renderAlerts(){
+  var alts=getAlerts();
+  updateBadge();
+  document.getElementById('pg-alertas').innerHTML=
+    '<div class="sec">Alertas de reposição</div>'+
+    (alts.length?alts.map(alertHtml).join(''):
+    '<div class="empty"><div class="ei">✓</div><div class="et">Tudo em dia!</div><div>Sem reposições pendentes.</div></div>');
+}
+
+function renderClis(){
+  curCli='';curAn='';
+  var el=document.getElementById('pg-clientes');
+  if(!DB.clientes.length){
+    el.innerHTML='<div class="empty"><div class="ei">🐴</div><div class="et">Nenhum cliente ainda</div><div style="font-size:12px">Toque em + para adicionar</div></div>';return;
+  }
+  el.innerHTML='<div class="sec">Clientes ('+DB.clientes.length+')</div>'+
+    DB.clientes.map(function(c){
+      var nA=DB.animais.filter(function(a){return a.cliId===c.id}).length;
+      var nB=DB.compras.filter(function(b){return b.cliId===c.id}).length;
+      var bg=clr(c.nome);
+      var segCls={ouro:'t-a',alto:'t-b',recorrente:'t-g',potencial:'t-p'}[c.seg]||'t-gr';
+      return'<div class="card" style="cursor:pointer;padding:11px" onclick="openCli(\''+c.id+'\')">'+
+        '<div class="li" style="border:none;padding:0">'+
+        '<div class="av" style="background:'+bg+'20;color:'+bg+'">'+ini(c.nome)+'</div>'+
+        '<div class="lb"><div class="ln">'+c.nome+' <span class="tag '+segCls+'">'+c.seg+'</span></div>'+
+        '<div class="ls">'+c.cidade+' · '+c.ativ+'</div>'+
+        '<div class="ls" style="margin-top:3px"><span class="tag t-gr">'+nA+' animais</span><span class="tag t-gr">'+nB+' compras</span></div></div>'+
+        '<div class="lr"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>'+
+        '</div></div>';
+    }).join('');
+}
+
+function openCli(id){curCli=id;curAn='';renderCli()}
+function renderCli(){
+  curAn='';
+  var c=DB.clientes.find(function(x){return x.id===curCli});if(!c)return;
+  var animais=DB.animais.filter(function(a){return a.cliId===curCli});
+  var compras=DB.compras.filter(function(b){return b.cliId===curCli});
+  var visitas=DB.visitas.filter(function(v){return v.cliId===curCli});
+  var fat=compras.reduce(function(s,b){return s+b.vl},0);
+  var bg=clr(c.nome);
+  document.getElementById('pg-clientes').innerHTML=
+    '<button class="back-btn" onclick="renderClis()">'+
+    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg> Clientes</button>'+
+    '<div class="card">'+
+    '<div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">'+
+    '<div class="av" style="width:44px;height:44px;font-size:16px;background:'+bg+'20;color:'+bg+'">'+ini(c.nome)+'</div>'+
+    '<div><div style="font-size:16px;font-weight:600">'+c.nome+'</div>'+
+    '<div class="ls">'+c.cidade+' · '+c.ativ+'</div></div></div>'+
+    (c.tel?'<a href="tel:'+c.tel+'" style="color:var(--g1);font-size:13px;display:block;margin-top:4px">📞 '+c.tel+'</a>':'')+
+    (c.vet?'<div class="ls" style="margin-top:4px">Vet: '+c.vet+'</div>':'')+
+    (c.obs?'<div class="ls" style="margin-top:4px">'+c.obs+'</div>':'')+
+    '</div>'+
+    '<div class="st-r">'+
+    '<div class="st"><div class="st-v">'+animais.length+'</div><div class="st-l">Animais</div></div>'+
+    '<div class="st"><div class="st-v">'+visitas.length+'</div><div class="st-l">Visitas</div></div>'+
+    '<div class="st"><div class="st-v">'+compras.length+'</div><div class="st-l">Compras</div></div>'+
+    '<div class="st"><div class="st-v" style="font-size:11px">'+fmtM(fat)+'</div><div class="st-l">Total</div></div>'+
+    '</div>'+
+    '<div style="margin-bottom:12px">'+
+    '<button class="btn-sm btn-p" onclick="openMd(\'md-an\')">+ Animal</button>'+
+    '<button class="btn-sm" style="background:var(--g5);color:var(--g1)" onclick="openMd(\'md-buy\')">+ Compra</button>'+
+    '<button class="btn-sm" style="background:var(--g5);color:var(--g1)" onclick="openMd(\'md-vis\')">+ Visita</button>'+
+    '</div>'+
+    '<div class="sec">Animais</div>'+
+    (animais.length?animais.map(function(a){
+      var d=a.prod&&a.ultima?dias(a.ultima,a.ciclo):null;
+      var st=d!==null?stA(d,a.aviso):'ok';
+      var dTxt=d===null?'':d<0?'<span class="tag t-r">Vencido '+Math.abs(d)+'d</span>':d<=2?'<span class="tag t-a">'+d+'d</span>':'<span class="tag t-g">'+d+'d</span>';
+      return'<div class="card" style="padding:11px;cursor:pointer;margin-bottom:7px" onclick="openAn(\''+a.id+'\')">'+
+        '<div style="display:flex;align-items:center;justify-content:space-between">'+
+        '<div style="font-size:13px;font-weight:500">'+(a.sx==='Fêmea'?'🐎':'🐴')+' '+a.nome+(a.rca?' · '+a.rca:'')+'</div>'+
+        dTxt+'</div>'+
+        (a.prod?'<div class="ls" style="margin-top:4px">'+a.prod+'</div>':'')+
+        '</div>';
+    }).join(''):'<div style="color:var(--ink4);font-size:13px;padding:8px 0">Nenhum animal cadastrado.</div>')+
+    (compras.length?'<div class="sec">Compras recentes</div>'+compras.slice(0,5).map(function(b){
+      return'<div class="li"><div class="lb"><div class="ln">'+b.pr+'</div><div class="ls">'+fmt(b.dt)+'</div></div><div style="font-size:13px;font-weight:600;color:var(--g1)">'+fmtM(b.vl)+'</div></div>';
+    }).join(''):'');
+}
+
+function openAn(id){curAn=id;renderAnimal()}
+function renderAnimal(){
+  var a=DB.animais.find(function(x){return x.id===curAn});
+  var c=DB.clientes.find(function(x){return x.id===curCli});
+  if(!a||!c)return;
+  var d=a.prod&&a.ultima?dias(a.ultima,a.ciclo):null;
+  var st=d!==null?stA(d,a.aviso):'ok';
+  var wpp='Olá '+c.nome+'! 🐴 '+a.nome+' precisa repor *'+a.prod+'*. Posso preparar o pedido? — DROGAVET';
+  document.getElementById('pg-clientes').innerHTML=
+    '<button class="back-btn" onclick="renderCli()">'+
+    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg> '+c.nome+'</button>'+
+    '<div class="card">'+
+    '<div style="font-size:17px;font-weight:600;margin-bottom:6px">'+(a.sx==='Fêmea'?'🐎':'🐴')+' '+a.nome+'</div>'+
+    '<div class="ls">'+(a.rca||'')+' '+(a.sx||'')+' '+(a.idade?a.idade+'a ':'')+' '+(a.peso?a.peso+'kg':'')+'</div>'+
+    (a.obs?'<div class="ls" style="margin-top:6px">'+a.obs+'</div>':'')+
+    '</div>'+
+    (a.prod?
+    '<div class="card">'+
+    '<div class="sec" style="margin-top:0">Reposição</div>'+
+    '<div style="font-size:13px;font-weight:600">'+a.prod+'</div>'+
+    '<div class="ls">Ciclo: '+a.ciclo+'d · Última: '+fmt(a.ultima)+'</div>'+
+    (d!==null?'<div style="margin-top:6px"><span class="tag '+(st==='urg'?'t-r':st==='hj'?'t-a':'t-g')+'">'+
+    (d<0?'Vencido '+Math.abs(d)+' dias':d<=2?'Repor em '+d+'d':'OK — repor em '+d+'d')+'</span></div>':'')+
+    (c.tel?'<button class="wpp-btn" onclick="copyText(`'+wpp.replace(/`/g,'\\`')+'`)">📱 Copiar WhatsApp</button>':'')+
+    '</div>':'');
+}
+
+function renderVis(){
+  var el=document.getElementById('pg-visitas');
+  if(!DB.visitas.length){
+    el.innerHTML='<div class="empty"><div class="ei">📋</div><div class="et">Nenhuma visita</div><div style="font-size:12px">Toque em + para registrar</div></div>';return;
+  }
+  el.innerHTML='<div class="sec">Visitas ('+DB.visitas.length+')</div>'+
+    DB.visitas.map(function(vis){
+      var cli=DB.clientes.find(function(c){return c.id===vis.cliId});
+      var bg=clr(cli?cli.nome:'?');
+      var stCls={Fechado:'t-g','Proposta enviada':'t-b','Retorno agendado':'t-p','Interessado':'t-a','Sem interesse':'t-gr'}[vis.st]||'t-gr';
+      return'<div class="card" style="padding:11px">'+
+        '<div style="display:flex;align-items:center;gap:10px">'+
+        '<div class="av" style="background:'+bg+'20;color:'+bg+'">'+ini(cli?cli.nome:'?')+'</div>'+
+        '<div class="lb"><div class="ln">'+(cli?cli.nome:'?')+
+        ' <span class="tag t-gr" style="font-size:9px">'+vis.pf+'</span></div>'+
+        '<div class="ls">'+fmt(vis.dt)+(vis.vl>0?' · '+fmtM(vis.vl):'')+'</div></div>'+
+        '<span class="tag '+stCls+'">'+vis.st+'</span></div>'+
+        (vis.pr?'<div class="ls" style="margin-top:6px">📦 '+vis.pr+'</div>':'')+
+        (vis.nx?'<div class="ls" style="margin-top:3px">➡️ '+vis.nx+'</div>':'')+
+        '</div>';
+    }).join('');
+}
+
+// ── CALCULADORA DE DOSES ──
+var DOSES={
+  'OrthoEq Grow':{p:480,f:'Pó no cocho · Potros 6m–2a',a:[
+    {n:'UC-II (colágeno tipo II)',d:function(){return'480mg'},o:'Dose fixa — independente do peso'},
+    {n:'Óleo EPA+DHA marinho',d:function(p){return Math.round(p*.02)+'g/dia'},o:'2g/100kg'},
+    {n:'MSM (OptiMSM)',d:function(p){return Math.round(p*.008)+'g/dia'},o:'0,8g/100kg'},
+    {n:'Vitamina C',d:function(p){return Math.round(p*.004)+'g/dia'},o:'0,4g/100kg'},
+  ]},
+  'OrthoEq Performance':{p:780,f:'Pó no cocho · Atletas adultos',a:[
+    {n:'UC-II',d:function(){return'480mg'},o:'Dose fixa'},
+    {n:'EPA+DHA marinho',d:function(p){return Math.round(p*.05)+'g/dia'},o:'5g/100kg'},
+    {n:'MSM',d:function(p){return Math.round(p*.04)+'g/dia'},o:'4g/100kg'},
+    {n:'Curcumina fosfolipídica',d:function(p){return Math.round(p*.008)+'g/dia'},o:'0,8g/100kg'},
+    {n:'Boswellia AKBA ≥20%',d:function(){return'600mg'},o:'Dose fixa'},
+    {n:'Vitamina C',d:function(p){return Math.round(p*.01)+'g/dia'},o:'1g/100kg'},
+  ]},
+  'PerformEq Prep':{p:420,f:'Pó no cocho · Loading 30 dias antes',a:[
+    {n:'Beta-Alanina',d:function(p){return Math.round(p*.018)+'g (loading)'},o:'Depois: 0,9g/100kg'},
+    {n:'Vitamina E natural',d:function(){return'2.000–3.000 UI'},o:''},
+    {n:'Selênio orgânico',d:function(){return'1–2mg'},o:'Nunca exceder 5mg'},
+    {n:'L-Leucina',d:function(p){return Math.round(p*.025)+'g/dia'},o:'2,5g/100kg'},
+    {n:'Vitamina C',d:function(p){return Math.round(p*.01)+'g/dia'},o:'1g/100kg'},
+  ]},
+  'PerformEq Race':{p:85,f:'Pasta oral · 2–3h antes + pós-prova',a:[
+    {n:'NaCl',d:function(){return'15g/dose'},o:''},
+    {n:'KCl',d:function(){return'6g/dose'},o:''},
+    {n:'Citrato de Cálcio',d:function(){return'3g/dose'},o:''},
+    {n:'Citrato de Magnésio',d:function(){return'1,5g/dose'},o:''},
+    {n:'Bicarbonato de Sódio',d:function(){return'10g/dose'},o:'Verificar regulamento'},
+  ]},
+  'PerformEq Recover':{p:140,f:'Pasta oral · 3 doses em 3 dias pós-prova',a:[
+    {n:'L-Carnitina',d:function(){return'3.000–5.000mg'},o:''},
+    {n:'Astaxantina (microalga)',d:function(){return'75–100mg'},o:''},
+    {n:'Vitamina E natural',d:function(){return'3.000 UI'},o:''},
+    {n:'Eletrólitos (NaCl+KCl+Mg)',d:function(){return'10g'},o:''},
+    {n:'L-Glutamina',d:function(){return'5g'},o:''},
+  ]},
+  'MuscleEq Adulto':{p:320,f:'Pó no cocho · Resultado visível em 6–8 semanas',a:[
+    {n:'L-Lisina',d:function(p){return Math.round(p*.06)+'g/dia'},o:'6g/100kg'},
+    {n:'L-Treonina',d:function(p){return Math.round(p*.03)+'g/dia'},o:'3g/100kg'},
+    {n:'DL-Metionina',d:function(p){return Math.round(p*.016)+'g/dia'},o:'1,6g/100kg'},
+    {n:'L-Leucina',d:function(p){return Math.round(p*.02)+'g/dia'},o:'2g/100kg'},
+    {n:'Vitamina E',d:function(){return'1.000 UI'},o:''},
+    {n:'Vitamina B6',d:function(){return'50mg'},o:''},
+  ]},
+  'MuscleEq Potro':{p:280,f:'Pó no cocho · Uso contínuo durante crescimento',a:[
+    {n:'L-Lisina (Fase 1)',d:function(){return'20–22g'},o:'Fase 2 (12–24m): 35–40g'},
+    {n:'L-Treonina',d:function(){return'10–14g'},o:'Aumentar na Fase 2'},
+    {n:'DL-Metionina',d:function(){return'5–7g'},o:''},
+    {n:'Vitamina E',d:function(){return'800–1.200 UI'},o:''},
+    {n:'Selênio',d:function(){return'0,5–1mg'},o:''},
+  ]},
+  'MuscleEq Égua':{p:350,f:'Pó no cocho · Gestação e lactação',a:[
+    {n:'L-Lisina',d:function(){return'30–45g/dia'},o:'Maior na lactação pico'},
+    {n:'L-Treonina',d:function(){return'15–20g/dia'},o:''},
+    {n:'DL-Metionina',d:function(){return'8–10g/dia'},o:''},
+    {n:'L-Leucina',d:function(){return'10–12g/dia'},o:''},
+    {n:'Vitamina E',d:function(){return'1.500–2.000 UI'},o:''},
+  ]},
+  'MetabEq Equilíbrio':{p:380,f:'Pó no cocho · Mínimo 60–90 dias',a:[
+    {n:'EPA+DHA marinho',d:function(p){return Math.round(p*.04)+'g/dia'},o:'4g/100kg'},
+    {n:'L-Glutamina',d:function(p){return Math.round(p*.018)+'g/dia'},o:'1,8g/100kg'},
+    {n:'Vitamina E natural',d:function(){return'2.000–3.000 UI'},o:''},
+    {n:'Levedura ativa',d:function(){return'10–20g/dia'},o:''},
+    {n:'Arthrospira platensis',d:function(){return'5–10g/dia'},o:''},
+    {n:'Picolinato de Cromo',d:function(){return'4mg/dia'},o:'Não exceder 8mg'},
+    {n:'Magnésio quelado',d:function(p){return Math.round(p*.014)+'g/dia'},o:'1,4g/100kg'},
+  ]},
+  'RespEq':{p:320,f:'Pó no cocho · Free doping — pode usar na prova',a:[
+    {n:'DHA de microalga',d:function(){return'1,5–3g DHA puro/dia'},o:'= 10–20g óleo rico'},
+    {n:'NAC (N-Acetilcisteína)',d:function(p){return(Math.round(p*.015*10)/10)+'g/dia'},o:'15mg/kg'},
+    {n:'Vitamina C',d:function(){return'5g/dia'},o:''},
+    {n:'Vitamina E natural',d:function(){return'1.000–2.000 UI'},o:''},
+  ]},
+  'GastroEq Ativo':{p:380,f:'Pellets · 28 dias · Jejum 30–60min antes',a:[
+    {n:'Omeprazol pellets entérico',d:function(p){return(p*4)+'mg/dia'},o:'4mg/kg — OBRIGATÓRIO revestimento entérico'},
+    {n:'Probiótico equino',d:function(){return'10g/dia'},o:'Separado do Omeprazol'},
+  ]},
+  'GastroEq Manutenção':{p:220,f:'Pellets · Uso contínuo durante temporada',a:[
+    {n:'Omeprazol pellets entérico',d:function(p){return p+'mg/dia'},o:'1mg/kg — dose manutenção'},
+    {n:'Probiótico equino',d:function(){return'10g/dia'},o:''},
+  ]},
+  'ReproEq Égua':{p:420,f:'Pó no cocho · Iniciar 90 dias antes da monta',a:[
+    {n:'DHA de microalga',d:function(){return'2g DHA puro/dia'},o:'= 10–15g óleo rico'},
+    {n:'Ácido Nicotínico (Niacina)',d:function(){return'3g/dia'},o:'Eleva NAD+ no fluido folicular 10x'},
+    {n:'Vitamina E natural',d:function(){return'1.000–1.500 UI'},o:''},
+    {n:'Selênio orgânico',d:function(){return'50mg/dia'},o:'Nunca exceder 100mg'},
+    {n:'L-Arginina',d:function(){return'10–15g/dia'},o:'Reduz fluido uterino'},
+    {n:'Vitamina D3',d:function(){return'6.000 UI'},o:''},
+    {n:'Vitamina C',d:function(){return'5g/dia'},o:''},
+  ]},
+  'ReproEq Garanhão':{p:450,f:'Pó no cocho · Iniciar 60 dias antes da monta',a:[
+    {n:'DHA de microalga',d:function(){return'1,5–2g DHA puro/dia'},o:'Fórmula QH 2023'},
+    {n:'L-Carnitina',d:function(){return'3.000–4.000mg/dia'},o:'+51% concentração espermática'},
+    {n:'Luteína',d:function(){return'50–100mg/dia'},o:'Diferencial vs Botupharma'},
+    {n:'Licopeno',d:function(){return'50–100mg/dia'},o:'Diferencial vs Botupharma'},
+    {n:'Beta-Caroteno',d:function(){return'200–400mg/dia'},o:''},
+    {n:'Vitamina E natural',d:function(){return'1.500–2.000 UI/dia'},o:''},
+    {n:'Selênio orgânico',d:function(){return'1–2mg/dia'},o:''},
+    {n:'Vitamina A',d:function(){return'10.000–15.000 UI/dia'},o:''},
+    {n:'Vitamina C',d:function(){return'3–5g/dia'},o:''},
+  ]},
+};
+
+function renderDose(){
+  document.getElementById('pg-dose').innerHTML=
+    '<div class="sec">Calculadora de doses</div>'+
+    '<div class="card">'+
+    '<div class="fl">'+
+    '<div><label class="lbl">Produto / Linha</label>'+
+    '<select class="inp" id="dose-prod" onchange="calcDose()">'+
+    '<option value="">— selecione —</option>'+
+    '<optgroup label="🦴 OrthoEq Articular">'+
+    Object.keys(DOSES).filter(function(k){return k.startsWith('OrthoEq')}).map(function(k){return'<option>'+k+'</option>'}).join('')+
+    '</optgroup><optgroup label="🏆 PerformEq">'+
+    Object.keys(DOSES).filter(function(k){return k.startsWith('PerformEq')}).map(function(k){return'<option>'+k+'</option>'}).join('')+
+    '</optgroup><optgroup label="💪 MuscleEq">'+
+    Object.keys(DOSES).filter(function(k){return k.startsWith('MuscleEq')}).map(function(k){return'<option>'+k+'</option>'}).join('')+
+    '</optgroup><optgroup label="Outras linhas">'+
+    ['MetabEq Equilíbrio','RespEq','GastroEq Ativo','GastroEq Manutenção','ReproEq Égua','ReproEq Garanhão'].map(function(k){return'<option>'+k+'</option>'}).join('')+
+    '</optgroup></select></div>'+
+    '<div><label class="lbl">Peso do animal (kg)</label>'+
+    '<input class="inp" id="dose-peso" type="number" placeholder="450" min="50" max="800" oninput="calcDose()" value="450"></div>'+
+    '</div></div>'+
+    '<div id="dose-result"></div>';
+}
+function calcDose(){
+  var prod=document.getElementById('dose-prod').value;
+  var peso=parseFloat(document.getElementById('dose-peso').value)||450;
+  var el=document.getElementById('dose-result');if(!el)return;
+  if(!prod){el.innerHTML='';return}
+  var d=DOSES[prod];if(!d){el.innerHTML='';return}
+  el.innerHTML='<div class="card">'+
+    '<div style="font-size:14px;font-weight:600;margin-bottom:6px">'+prod+'</div>'+
+    '<div style="margin-bottom:10px">'+
+    '<span class="tag t-g" style="font-size:10px">'+d.f+'</span>'+
+    '<span class="tag t-g" style="font-size:10px">R$'+d.p+'/mês</span>'+
+    '</div>'+
+    d.a.map(function(a,i){
+      return'<div class="dose-row" style="border-bottom:'+(i<d.a.length-1?'1px solid var(--bd)':'none')+'">'+
+        '<b>'+a.n+'</b><br>'+
+        '<span style="color:var(--g1);font-weight:600">'+a.d(peso)+'</span>'+
+        (a.o?' <span style="color:var(--ink4)">· '+a.o+'</span>':'')+
+        '</div>';
+    }).join('')+
+    '<div style="margin-top:8px;font-size:11px;color:var(--ink4)">* Para animal de '+peso+'kg</div>'+
+    '</div>';
+}
+
+// ── INIT ──
+document.getElementById('hdr-date').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'short',day:'numeric',month:'short'});
+
+// Esconder banner se já foi adicionado à tela inicial (standalone)
+if(window.navigator.standalone){
+  document.getElementById('install-banner').style.display='none';
+  document.getElementById('hdr-sub').textContent='CRM Equinos · Maringá & Pres. Prudente';
+}
+
+renderHome();
+renderDose();
+</script>
+</body>
+</html>
